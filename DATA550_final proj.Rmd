@@ -1,0 +1,158 @@
+---
+title: "DATA550_final proj"
+author: "Jiayi Liu"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+The **Healthy People 2020 Tobacco Use Objectives** dataset, provided by the CDC, is part of a national initiative aimed at reducing tobacco consumption and its associated health risks in the United States. This report explores trends and key factors influencing progress toward meeting the objectives.
+
+# Data Loading
+We load the dataset from a local directory.
+
+```{r load-data}
+library(tidyverse)
+
+file_path <- "/Users/liujiayi/DATA550_exercise/final proj/Healthy_People_2020_Tobacco_Use_Objectives_20250128.csv"
+data <- read_csv(file_path)
+
+# Display first few rows
+head(data)
+```
+
+# Exploratory Data Analysis
+## Summary Statistics
+We first examine the structure and summary of the dataset.
+
+```{r summary-stats}
+# Structure of the dataset
+str(data)
+
+# Summary statistics
+summary(data)
+```
+
+## Data Cleaning
+We check for missing values and handle them appropriately.
+
+```{r data-cleaning}
+# Count missing values
+colSums(is.na(data))
+
+data_clean <- data %>% filter(!(is.na(Target) & is.na(Baseline)))
+
+nrow(data_clean) # > 0, proceed to visualization
+```
+
+```{r}
+# create a direct objective_status column
+data_clean <- data_clean %>%
+  mutate(Objective_Status = case_when(
+    !is.na(Target) & !is.na(Baseline) & Baseline >= Target ~ "Achieved",
+    !is.na(Target) & !is.na(Baseline) & Baseline < Target  ~ "In Progress",
+    TRUE ~ "Unknown"
+  ))
+
+# check if this created meaningful categories
+table(data_clean$Objective_Status)
+```
+
+# Visualization
+## Progress Toward Objectives
+A bar plot shows the distribution of progress toward tobacco reduction objectives.
+
+```{r progress-plot}
+ggplot(data_clean, aes(x = Objective_Status)) +
+  geom_bar(fill = "steelblue") +
+  labs(title = "Progress Toward Tobacco Use Objectives",
+       x = "Objective Status",
+       y = "Count") +
+  theme_minimal()
+```
+
+**Figure 1**: The distribution of objectives based on their current status.
+
+## Distribution of Baseline Tobacco Use Rates
+A histogram showing the distribution of baseline rates.
+
+```{r baseline-distribution}
+ggplot(data_clean, aes(x = Baseline)) +
+  geom_histogram(binwidth = 5, fill = "steelblue", color = "black", alpha = 0.7) +
+  labs(title = "Distribution of Baseline Tobacco Use Rates",
+       x = "Baseline Rate (%)",
+       y = "Count") +
+  theme_minimal()
+```
+
+## Baseline Tobacco Use Rates by Objective Status
+A box plot comparing baseline rates for achieved vs. in-progress objectives.
+
+```{r baseline-boxplot}
+ggplot(data_clean, aes(x = Objective_Status, y = Baseline, fill = Objective_Status)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(title = "Baseline Tobacco Use Rates by Objective Status",
+       x = "Objective Status",
+       y = "Baseline Rate (%)") +
+  theme_minimal()
+```
+
+## Proportion of Objectives by Status
+A pie chart displaying the proportion of achieved vs. in-progress objectives.
+
+```{r objective-status-pie}
+data_pie <- data_clean %>%
+  group_by(Objective_Status) %>%
+  summarise(count = n())
+
+ggplot(data_pie, aes(x = "", y = count, fill = Objective_Status)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  labs(title = "Proportion of Objectives by Status") +
+  theme_void()
+```
+
+## Baseline vs. Target Tobacco Use Rates
+A scatter plot comparing baseline values to target goals.
+
+```{r baseline-vs-target}
+ggplot(data_clean, aes(x = Baseline, y = Target)) +
+  geom_point(color = "blue", alpha = 0.6) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "red") +
+  labs(title = "Baseline vs. Target Tobacco Use Rates",
+       x = "Baseline Rate (%)",
+       y = "Target Rate (%)") +
+  theme_minimal()
+```
+
+# Statistical Analysis
+We use a simple linear regression model to assess factors influencing progress.
+
+```{r regression-model}
+lm_model <- lm(Baseline ~ Objective_Status, data = data_clean)
+summary(lm_model)
+```
+
+The regression results provide insights into how objective status influences the baseline rate of tobacco use.
+
+# Conclusion and Recommendations
+Based on the findings:
+
+- Most objectives show positive progress, but some lag behind.
+
+- The distribution of baseline rates varies significantly.
+
+- Regression results suggest that objective status significantly impacts progress.
+
+**Recommendations:**
+- Strengthen policies targeting lagging objectives.
+
+- Enhance public awareness campaigns.
+
+- Further research to identify barriers to progress.
+
+This analysis provides valuable insights for future tobacco control strategies.
