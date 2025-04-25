@@ -18,7 +18,7 @@ We load the dataset from a local directory.
 ```{r load-data}
 library(tidyverse)
 
-file_path <- "/Users/liujiayi/DATA550_exercise/final proj/Healthy_People_2020_Tobacco_Use_Objectives_20250128.csv"
+file_path <- file.path("data", "Healthy_People_2020_Tobacco_Use_Objectives_20250128.csv")
 data <- read_csv(file_path)
 
 # Display first few rows

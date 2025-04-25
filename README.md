@@ -7,14 +7,46 @@ This repository contains the final project for DATA550, which analyzes the Healt
 - **DATA550_final proj.Rmd:** The main R Markdown file containing the data analysis and visualizations
 - **Makefile:** Contains a rule to build the final HTML report
 - **data/Healthy_People_2020_Tobacco_Use_Objectives_20250128.csv:** The dataset
+- **Dockerfile:** Defines a Docker image that can render the R Markdown reproducibly
 - **README.md:** This file, explaining the repository and how to generate the report
 
-## How to Build the Final Report
+## Local Build (no Docker)
 
-To generate the final report as an HTML file, run the following command in the repository root:
+To generate the HTML report via your local R installation:
 ```bash
 make
 ```
+
+### 1. Dockerhub image
+
+This image is published as:  
+```bash
+docker pull jiayiliu7/550_final_proj4:latest
+```
+
+→ https://hub.docker.com/r/jiayiliu7/550_final_proj4
+
+### 2. One-step via Makefile
+
+```bash
+make docker-run
+```
+
+ ### 3. Direct Docker commands
+
+```bash
+# build image
+docker build --platform linux/amd64 -t jiayiliu7/550_final_proj4:latest .
+
+# ensure report folder exists
+mkdir -p report
+
+# run container and render
+docker run --rm \
+  -v "$(pwd)/report":/home/rstudio/project/report \
+  jiayiliu7/550_final_proj4:latest
+```
+
 
 ## Code Overview: Tables and Figures
 
