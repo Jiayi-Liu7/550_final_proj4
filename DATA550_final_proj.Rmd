@@ -1,5 +1,5 @@
 ---
-title: "DATA550_final proj"
+title: "DATA550_final_proj"
 author: "Jiayi Liu"
 date: "`r Sys.Date()`"
 output: html_document
@@ -18,8 +18,8 @@ We load the dataset from a local directory.
 ```{r load-data}
 library(tidyverse)
 
-file_path <- file.path("data", "Healthy_People_2020_Tobacco_Use_Objectives_20250128.csv")
-data <- read_csv(file_path)
+file_path <- "data/Healthy_People_2020_Tobacco_Use_Objectives_20250128.csv"
+data <- readr::read_csv(file_path)
 
 # Display first few rows
 head(data)

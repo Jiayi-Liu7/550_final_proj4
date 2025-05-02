@@ -12,9 +12,3 @@ COPY . /home/rstudio/project
 
 # install R deps
 RUN R -e "install.packages(c('tidyverse','knitr','rmarkdown'), repos='https://cloud.r-project.org')"
-
-# default working directory for report output
-VOLUME ["/home/rstudio/project/report"]
-
-# entrypoint: render the Rmd into report folder
-ENTRYPOINT ["Rscript", "-e", "rmarkdown::render('DATA550_final proj.Rmd', output_dir='report')"]

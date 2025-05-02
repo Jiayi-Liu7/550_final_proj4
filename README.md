@@ -17,14 +17,24 @@ To generate the HTML report via your local R installation:
 make
 ```
 
+## Publish to Docker Hub
+
+To make the image available for everyone:
+
+```bash
+docker login
+docker build --platform linux/amd64 \
+  -t jiayiliu7/550_final_proj4:latest .
+docker push jiayiliu7/550_final_proj4:latest
+```
+
 ### 1. Dockerhub image
 
-This image is published as:  
+Pull the pre-built image from DockerHub:
+
 ```bash
 docker pull jiayiliu7/550_final_proj4:latest
 ```
-
-→ https://hub.docker.com/r/jiayiliu7/550_final_proj4
 
 ### 2. One-step via Makefile
 
@@ -32,7 +42,7 @@ docker pull jiayiliu7/550_final_proj4:latest
 make docker-run
 ```
 
- ### 3. Direct Docker commands
+### 3. Direct Docker commands
 
 ```bash
 # build image
